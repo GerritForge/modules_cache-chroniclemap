@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b5c9c2d8_8a99de44",
+        "filename": "external_plugin_deps.bzl",
+        "patchSetId": 5
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-15T20:45:41Z",
+      "side": 1,
+      "message": "It would be best to match the chronicle-map with its chronicle-core, as their POMs are made to be matching.",
+      "range": {
+        "startLine": 6,
+        "startChar": 46,
+        "endLine": 6,
+        "endChar": 53
+      },
+      "revId": "def4c454d2229d3e757c2f72c29071d4c2a1b43f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "466190fa_81bf9fc6",
+        "filename": "external_plugin_deps.bzl",
+        "patchSetId": 5
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-15T20:45:41Z",
+      "side": 1,
+      "message": "Can this be DRYed out into a common variable?",
+      "range": {
+        "startLine": 12,
+        "startChar": 47,
+        "endLine": 12,
+        "endChar": 54
+      },
+      "revId": "def4c454d2229d3e757c2f72c29071d4c2a1b43f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
