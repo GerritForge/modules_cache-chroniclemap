@@ -1,11 +1,17 @@
-# Gerrit Code Review persistent cache based on ChronicleMap
+# Persistent cache for Gerrit, based on ChronicleMap
 
-Non-blocking and super-fast on-disk cache module for Gerrit Code Review
+Non-blocking and super-fast on-disk cache libModule for [Gerrit Code Review](https://gerritcodereview.com)
 based on [ChronicleMap on-disk implementation](https://github.com/OpenHFT/Chronicle-Map).
+
+## How to build
+
+This libModule is built like a Gerrit in-tree plugin, using Bazelisk. See the
+[build instructions](src/main/resources/Documentation/build.md) for more details.
+
 
 ## Setup
 
-* Install @PLUGIN@ module
+* Install cache-chronicalmap module
 
 Install the chronicle-map module into the `$GERRIT_SITE/lib` directory.
 
