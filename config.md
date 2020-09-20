@@ -1,8 +1,8 @@
+Configuration
+=============
 
-@PLUGIN@ Configuration
-=========================
-
-Global configuration of the @PLUGIN@ plugin is done in the `gerrit.config` file in the site's etc directory.
+Global configuration of the cache-chroniclemap libModule is done in the `gerrit.config` file in the
+site's etc directory.
 
 Information about gerrit caches mechanism can be found in the relevant
 [documentation section](https://charm.cs.illinois.edu/gerrit/Documentation/config-gerrit.html#cache).
