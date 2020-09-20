@@ -1,6 +1,6 @@
 
-@PLUGIN@ Configuration
-=========================
+Configuration
+=============
 
 Global configuration of the @PLUGIN@ plugin is done in the `gerrit.config` file in the site's etc directory.
 
