@@ -6,7 +6,7 @@ based on [ChronicleMap on-disk implementation](https://github.com/OpenHFT/Chroni
 ## How to build
 
 This libModule is built like a Gerrit in-tree plugin, using Bazelisk. See the
-[build instructions](src/main/resources/Documentation/build.md) for more details. 
+[build instructions](build.md) for more details.
 
 
 ## Setup
