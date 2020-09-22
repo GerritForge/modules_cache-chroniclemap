@@ -24,16 +24,3 @@ Add the cache-chroniclemap module to `$GERRIT_SITE/etc/gerrit.config` as follows
 
 For further information and supported options, refer to [config](config.md)
 documentation.
-
-## TODOs
-
-### Cache expiry feature
-
-chronicle-map does not have the concept of entry expiration.
-To completely fulfill the contract of the
-[CacheDef](https://gerrit.googlesource.com/gerrit/+/refs/heads/master/java/com/google/gerrit/server/cache/CacheDef.java)
-the following methods should be honoured in the chronicle-map implementation:
-
-            expireAfterWrite();
-            expireFromMemoryAfterAccess();
-            refreshAfterWrite();

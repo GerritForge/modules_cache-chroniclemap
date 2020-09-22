@@ -18,20 +18,22 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheStats;
 import com.google.gerrit.server.cache.PersistentCache;
 import com.google.gerrit.server.cache.PersistentCacheDef;
+import com.google.gerrit.server.util.time.TimeUtil;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.LongAdder;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
-import net.openhft.chronicle.map.MapEntry;
 
 public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
     implements PersistentCache {
 
   private final ChronicleMapCacheConfig config;
   private final CacheLoader<K, V> loader;
-  private final ChronicleMap<K, V> store;
+  private final ChronicleMap<K, TimedValue<V>> store;
   private final LongAdder hitCount = new LongAdder();
   private final LongAdder missCount = new LongAdder();
   private final LongAdder loadSuccessCount = new LongAdder();
@@ -45,11 +47,12 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
       throws IOException {
     this.config = config;
     this.loader = loader;
-    final Class<K> keyClass = (Class<K>) def.keyType().getRawType();
-    final Class<V> valueClass = (Class<V>) def.valueType().getRawType();
 
-    final ChronicleMapBuilder<K, V> mapBuilder =
-        ChronicleMap.of(keyClass, valueClass).name(def.name());
+    final Class<K> keyClass = (Class<K>) def.keyType().getRawType();
+    final Class<TimedValue<V>> valueWrapperClass = (Class<TimedValue<V>>) (Class) TimedValue.class;
+
+    final ChronicleMapBuilder<K, TimedValue<V>> mapBuilder =
+        ChronicleMap.of(keyClass, valueWrapperClass).name(def.name());
 
     // Chronicle-map does not allow to custom-serialize boxed primitives
     // such as Boolean, Integer, for which size is statically determined.
@@ -61,10 +64,8 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
       mapBuilder.keyMarshaller(new ChronicleMapMarshallerAdapter<>(def.keySerializer()));
     }
 
-    if (!mapBuilder.constantlySizedValues()) {
-      mapBuilder.averageValueSize(config.getAverageValueSize());
-      mapBuilder.valueMarshaller(new ChronicleMapMarshallerAdapter<>(def.valueSerializer()));
-    }
+    mapBuilder.averageValueSize(config.getAverageValueSize());
+    mapBuilder.valueMarshaller(new TimedValueMarshaller<>(def.valueSerializer()));
 
     // TODO: ChronicleMap must have "entries" configured, however cache definition
     //  has already the concept of diskLimit. How to reconcile the two when both
@@ -80,11 +81,20 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
     }
   }
 
+  public ChronicleMapCacheConfig getConfig() {
+    return config;
+  }
+
   @Override
   public V getIfPresent(Object objKey) {
     if (store.containsKey(objKey)) {
-      hitCount.increment();
-      return store.get(objKey);
+      TimedValue<V> vTimedValue = store.get(objKey);
+      if (!expired(vTimedValue.getCreated())) {
+        hitCount.increment();
+        return vTimedValue.getValue();
+      } else {
+        invalidate(objKey);
+      }
     }
     missCount.increment();
     return null;
@@ -93,8 +103,11 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
   @Override
   public V get(K key) throws ExecutionException {
     if (store.containsKey(key)) {
-      hitCount.increment();
-      return store.get(key);
+      TimedValue<V> vTimedValue = store.get(key);
+      if (!needsRefresh(vTimedValue.getCreated())) {
+        hitCount.increment();
+        return vTimedValue.getValue();
+      }
     }
     missCount.increment();
     if (loader != null) {
@@ -120,8 +133,11 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
   @Override
   public V get(K key, Callable<? extends V> valueLoader) throws ExecutionException {
     if (store.containsKey(key)) {
-      hitCount.increment();
-      return store.get(key);
+      TimedValue<V> vTimedValue = store.get(key);
+      if (!needsRefresh(vTimedValue.getCreated())) {
+        hitCount.increment();
+        return vTimedValue.getValue();
+      }
     }
     missCount.increment();
     V v = null;
@@ -140,7 +156,29 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
 
   @Override
   public void put(K key, V val) {
-    store.put(key, val);
+    TimedValue<V> wrapped = new TimedValue<>(val);
+    store.put(key, wrapped);
+  }
+
+  public void prune() {
+    store.forEachEntry(
+        c -> {
+          if (expired(c.value().get().getCreated())) {
+            c.context().remove(c);
+          }
+        });
+  }
+
+  private boolean expired(long created) {
+    Duration expireAfterWrite = config.getExpireAfterWrite();
+    Duration age = Duration.between(Instant.ofEpochMilli(created), TimeUtil.now());
+    return !expireAfterWrite.isZero() && age.compareTo(expireAfterWrite) > 0;
+  }
+
+  private boolean needsRefresh(long created) {
+    final Duration refreshAfterWrite = config.getRefreshAfterWrite();
+    Duration age = Duration.between(Instant.ofEpochMilli(created), TimeUtil.now());
+    return !refreshAfterWrite.isZero() && age.compareTo(refreshAfterWrite) > 0;
   }
 
   @Override
@@ -150,7 +188,7 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
 
   @Override
   public void invalidateAll() {
-    store.forEachEntry(MapEntry::doRemove);
+    store.clear();
   }
 
   @Override
