@@ -20,6 +20,7 @@ import static com.googlesource.gerrit.modules.cache.chroniclemap.ChronicleMapCac
 
 import com.google.gerrit.server.config.SitePaths;
 import java.nio.file.Files;
+import java.time.Duration;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.storage.file.FileBasedConfig;
 import org.eclipse.jgit.util.FS;
@@ -33,6 +34,8 @@ public class ChronicleMapCacheConfigTest {
   private final String cacheName = "foobar-cache";
   private final String cacheKey = "foobar-cache-key";
   private final long definitionDiskLimit = 100;
+  private final Duration expireAfterWrite = Duration.ofSeconds(10_000);
+  private final Duration refreshAfterWrite = Duration.ofSeconds(20_000);
 
   @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
   private SitePaths sitePaths;
@@ -80,7 +83,7 @@ public class ChronicleMapCacheConfigTest {
   }
 
   @Test
-  public void shouldProvideDefinitionDiskLimitWhenNotCofigured() {
+  public void shouldProvideDefinitionDiskLimitWhenNotConfigured() {
     assertThat(configUnderTest(gerritConfig).getDiskLimit()).isEqualTo(definitionDiskLimit);
   }
 
@@ -127,8 +130,44 @@ public class ChronicleMapCacheConfigTest {
         .isEqualTo(DEFAULT_AVG_VALUE_SIZE);
   }
 
+  @Test
+  public void shouldProvideExpireAfterWriteWhenMaxAgeIsConfgured() throws Exception {
+    String maxAge = "3 minutes";
+    gerritConfig.setString("cache", cacheKey, "maxAge", maxAge);
+    gerritConfig.save();
+
+    assertThat(configUnderTest(gerritConfig).getExpireAfterWrite())
+        .isEqualTo(Duration.ofSeconds(180));
+  }
+
+  @Test
+  public void shouldProvideDefinitionExpireAfterWriteWhenNotConfigured() {
+    assertThat(configUnderTest(gerritConfig).getExpireAfterWrite()).isEqualTo(expireAfterWrite);
+  }
+
+  @Test
+  public void shouldProvideRefreshAfterWriteWhenConfigured() throws Exception {
+    String refreshAfterWrite = "6 minutes";
+    gerritConfig.setString("cache", cacheKey, "refreshAfterWrite", refreshAfterWrite);
+    gerritConfig.save();
+
+    assertThat(configUnderTest(gerritConfig).getRefreshAfterWrite())
+        .isEqualTo(Duration.ofSeconds(360));
+  }
+
+  @Test
+  public void shouldProvideDefinitionRefreshAfterWriteWhenNotConfigured() {
+    assertThat(configUnderTest(gerritConfig).getRefreshAfterWrite()).isEqualTo(refreshAfterWrite);
+  }
+
   private ChronicleMapCacheConfig configUnderTest(StoredConfig gerritConfig) {
     return new ChronicleMapCacheConfig(
-        gerritConfig, sitePaths, cacheName, cacheKey, definitionDiskLimit);
+        gerritConfig,
+        sitePaths,
+        cacheName,
+        cacheKey,
+        definitionDiskLimit,
+        expireAfterWrite,
+        refreshAfterWrite);
   }
 }

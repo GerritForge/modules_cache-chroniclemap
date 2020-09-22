@@ -162,27 +162,70 @@ public class ChronicleMapCacheTest {
     assertThat(cache.stats().loadExceptionCount()).isEqualTo(0);
   }
 
+  @Test
+  public void getIfPresentShouldReturnNullWhenValueIsExpired() throws Exception {
+    ChronicleMapCacheImpl<String, String> cache = newCache(true, null, Duration.ofSeconds(1), null);
+    cache.put("foo", "some-stale-value");
+    Thread.sleep(1000); // Allow cache entry to expire
+    assertThat(cache.getIfPresent("foo")).isNull();
+  }
+
+  @Test
+  public void getShouldRefreshValueWhenExpired() throws Exception {
+    String newCachedValue = UUID.randomUUID().toString();
+    ChronicleMapCacheImpl<String, String> cache =
+        newCache(true, newCachedValue, null, Duration.ofSeconds(1));
+    cache.put("foo", "some-stale-value");
+    Thread.sleep(1000); // Allow cache to be flagged as needing refresh
+    assertThat(cache.get("foo")).isEqualTo(newCachedValue);
+  }
+
+  //  @Test
+  //  public void shouldPruneExpiredValues() throws Exception {
+  //    ChronicleMapCacheImpl<String, String> cache = newCache(true, null, Duration.ofSeconds(1),
+  // null);
+  //    cache.put("foo1", "some-stale-value1");
+  //    cache.put("foo2", "some-stale-value1");
+  //    Thread.sleep(1000); // Allow cache entries to expire
+  //    cache.put("foo3", "some-fresh-value3");
+  //    cache.prune();
+  //
+  //    assertThat(cache.size()).isEqualTo(1);
+  //    assertThat(cache.get("foo3")).isEqualTo("some-fresh-value3");
+  //  }
+
   private ChronicleMapCacheImpl<String, String> newCache(
-      Boolean withLoader, @Nullable String cachedValue) throws IOException {
+      Boolean withLoader,
+      @Nullable String cachedValue,
+      @Nullable Duration expireAfterWrite,
+      @Nullable Duration refreshAfterWrite)
+      throws IOException {
     TestPersistentCacheDef cacheDef = new TestPersistentCacheDef(cachedValue);
+
     ChronicleMapCacheConfig config =
         new ChronicleMapCacheConfig(
-            gerritConfig, sitePaths, cacheDef.name(), cacheDef.configKey(), cacheDef.diskLimit());
+            gerritConfig,
+            sitePaths,
+            cacheDef.name(),
+            cacheDef.configKey(),
+            cacheDef.diskLimit(),
+            expireAfterWrite != null ? expireAfterWrite : Duration.ZERO,
+            refreshAfterWrite != null ? refreshAfterWrite : Duration.ZERO);
 
     return new ChronicleMapCacheImpl<>(cacheDef, config, withLoader ? cacheDef.loader() : null);
   }
 
   private ChronicleMapCacheImpl<String, String> newCacheWithLoader(@Nullable String cachedValue)
       throws IOException {
-    return newCache(true, cachedValue);
+    return newCache(true, cachedValue, null, null);
   }
 
   private ChronicleMapCacheImpl<String, String> newCacheWithLoader() throws IOException {
-    return newCache(true, null);
+    return newCache(true, null, null, null);
   }
 
   private ChronicleMapCacheImpl<String, String> newCacheWithoutLoader() throws IOException {
-    return newCache(false, null);
+    return newCache(false, null, null, null);
   }
 
   public static class TestPersistentCacheDef implements PersistentCacheDef<String, String> {
