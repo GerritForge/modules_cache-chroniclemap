@@ -20,6 +20,8 @@ import static com.googlesource.gerrit.modules.cache.chroniclemap.ChronicleMapCac
 
 import com.google.gerrit.server.config.SitePaths;
 import java.nio.file.Files;
+import java.time.Duration;
+
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.storage.file.FileBasedConfig;
 import org.eclipse.jgit.util.FS;
@@ -129,6 +131,6 @@ public class ChronicleMapCacheConfigTest {
 
   private ChronicleMapCacheConfig configUnderTest(StoredConfig gerritConfig) {
     return new ChronicleMapCacheConfig(
-        gerritConfig, sitePaths, cacheName, cacheKey, definitionDiskLimit);
+        gerritConfig, sitePaths, cacheName, cacheKey, definitionDiskLimit, Duration.ZERO, Duration.ZERO);
   }
 }

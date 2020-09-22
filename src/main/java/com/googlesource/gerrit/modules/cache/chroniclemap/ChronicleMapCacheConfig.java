@@ -14,15 +14,21 @@
 package com.googlesource.gerrit.modules.cache.chroniclemap;
 
 import com.google.common.flogger.FluentLogger;
+import com.google.gerrit.common.Nullable;
+import com.google.gerrit.server.config.ConfigUtil;
 import com.google.gerrit.server.config.GerritServerConfig;
 import com.google.gerrit.server.config.SitePaths;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
+import org.eclipse.jgit.lib.Config;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.eclipse.jgit.lib.Config;
+import java.time.Duration;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ChronicleMapCacheConfig {
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
@@ -32,6 +38,8 @@ public class ChronicleMapCacheConfig {
   private final long maxEntries;
   private final long averageKeySize;
   private final long averageValueSize;
+  private final Duration expireAfterWrite;
+  private final Duration refreshAfterWrite;
 
   public static final long DEFAULT_MAX_ENTRIES = 1000;
 
@@ -42,7 +50,9 @@ public class ChronicleMapCacheConfig {
     ChronicleMapCacheConfig create(
         @Assisted("Name") String name,
         @Assisted("ConfigKey") String configKey,
-        @Assisted("DiskLimit") long diskLimit);
+        @Assisted("DiskLimit") long diskLimit,
+        @Nullable @Assisted("ExpireAfterWrite") Duration expireAfterWrite,
+        @Nullable @Assisted("RefreshAfterWrite") Duration refreshAfterWrite);
   }
 
   @AssistedInject
@@ -51,7 +61,9 @@ public class ChronicleMapCacheConfig {
       SitePaths site,
       @Assisted("Name") String name,
       @Assisted("ConfigKey") String configKey,
-      @Assisted("DiskLimit") long diskLimit) {
+      @Assisted("DiskLimit") long diskLimit,
+      @Nullable @Assisted("ExpireAfterWrite") Duration expireAfterWrite,
+      @Nullable @Assisted("RefreshAfterWrite") Duration refreshAfterWrite) {
     final Path cacheDir = getCacheDir(site, cfg.getString("cache", null, "directory"));
     this.persistedFile =
         cacheDir != null ? cacheDir.resolve(String.format("%s.dat", name)).toFile() : null;
@@ -60,6 +72,27 @@ public class ChronicleMapCacheConfig {
     this.maxEntries = cfg.getLong("cache", configKey, "maxEntries", DEFAULT_MAX_ENTRIES);
     this.averageKeySize = cfg.getLong("cache", configKey, "avgKeySize", DEFAULT_AVG_KEY_SIZE);
     this.averageValueSize = cfg.getLong("cache", configKey, "avgValueSize", DEFAULT_AVG_VALUE_SIZE);
+    this.expireAfterWrite =
+        Duration.ofSeconds(
+            ConfigUtil.getTimeUnit(
+                cfg, "cache", configKey, "maxAge", toSeconds(expireAfterWrite), SECONDS));
+    this.refreshAfterWrite =
+        Duration.ofSeconds(
+            ConfigUtil.getTimeUnit(
+                cfg,
+                "cache",
+                configKey,
+                "refreshAfterWrite",
+                toSeconds(refreshAfterWrite),
+                SECONDS));
+  }
+
+  public Duration getExpireAfterWrite() {
+    return expireAfterWrite;
+  }
+
+  public Duration getRefreshAfterWrite() {
+    return refreshAfterWrite;
   }
 
   public long getMaxEntries() {
@@ -101,5 +134,9 @@ public class ChronicleMapCacheConfig {
     }
     logger.atFine().log("Enabling disk cache %s", loc.toAbsolutePath());
     return loc;
+  }
+
+  private static long toSeconds(@Nullable Duration duration) {
+    return duration != null ? duration.getSeconds() : 0;
   }
 }
