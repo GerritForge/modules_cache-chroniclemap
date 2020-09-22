@@ -18,6 +18,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheStats;
 import com.google.gerrit.server.cache.PersistentCache;
 import com.google.gerrit.server.cache.PersistentCacheDef;
+import com.google.gerrit.server.cache.serialize.CacheSerializer;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -31,13 +32,14 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
 
   private final ChronicleMapCacheConfig config;
   private final CacheLoader<K, V> loader;
-  private final ChronicleMap<K, V> store;
+  private final ChronicleMap<K, TimedValue<V>> store;
   private final LongAdder hitCount = new LongAdder();
   private final LongAdder missCount = new LongAdder();
   private final LongAdder loadSuccessCount = new LongAdder();
   private final LongAdder loadExceptionCount = new LongAdder();
   private final LongAdder totalLoadTime = new LongAdder();
   private final LongAdder evictionCount = new LongAdder();
+  private final CacheSerializer<V> valueSerializer;
 
   @SuppressWarnings("unchecked")
   ChronicleMapCacheImpl(
@@ -45,11 +47,13 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
       throws IOException {
     this.config = config;
     this.loader = loader;
-    final Class<K> keyClass = (Class<K>) def.keyType().getRawType();
-    final Class<V> valueClass = (Class<V>) def.valueType().getRawType();
+    this.valueSerializer = def.valueSerializer();
 
-    final ChronicleMapBuilder<K, V> mapBuilder =
-        ChronicleMap.of(keyClass, valueClass).name(def.name());
+    final Class<K> keyClass = (Class<K>) def.keyType().getRawType();
+    final Class<TimedValue<V>> valueWrapperClass = (Class<TimedValue<V>>) (Class) TimedValue.class;
+
+    final ChronicleMapBuilder<K, TimedValue<V>> mapBuilder =
+        ChronicleMap.of(keyClass, valueWrapperClass).name(def.name());
 
     // Chronicle-map does not allow to custom-serialize boxed primitives
     // such as Boolean, Integer, for which size is statically determined.
@@ -61,10 +65,8 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
       mapBuilder.keyMarshaller(new ChronicleMapMarshallerAdapter<>(def.keySerializer()));
     }
 
-    if (!mapBuilder.constantlySizedValues()) {
-      mapBuilder.averageValueSize(config.getAverageValueSize());
-      mapBuilder.valueMarshaller(new ChronicleMapMarshallerAdapter<>(def.valueSerializer()));
-    }
+    mapBuilder.averageValueSize(config.getAverageValueSize());
+    mapBuilder.valueMarshaller(new TimedValueMarshaller<>(def.valueSerializer()));
 
     // TODO: ChronicleMap must have "entries" configured, however cache definition
     //  has already the concept of diskLimit. How to reconcile the two when both
@@ -84,7 +86,7 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
   public V getIfPresent(Object objKey) {
     if (store.containsKey(objKey)) {
       hitCount.increment();
-      return store.get(objKey);
+      return store.get(objKey).getValue();
     }
     missCount.increment();
     return null;
@@ -94,7 +96,7 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
   public V get(K key) throws ExecutionException {
     if (store.containsKey(key)) {
       hitCount.increment();
-      return store.get(key);
+      return store.get(key).getValue();
     }
     missCount.increment();
     if (loader != null) {
@@ -120,8 +122,9 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
   @Override
   public V get(K key, Callable<? extends V> valueLoader) throws ExecutionException {
     if (store.containsKey(key)) {
+      TimedValue<V> vTimedValue = store.get(key);
       hitCount.increment();
-      return store.get(key);
+      return store.get(key).getValue();
     }
     missCount.increment();
     V v = null;
@@ -140,7 +143,8 @@ public class ChronicleMapCacheImpl<K, V> extends AbstractLoadingCache<K, V>
 
   @Override
   public void put(K key, V val) {
-    store.put(key, val);
+    final TimedValue<V> wrapped = new TimedValue<>(val, valueSerializer);
+    store.put(key, wrapped);
   }
 
   @Override
