@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "32b04cab_d9db4da3",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/TimedValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-22T21:29:39Z",
+      "side": 1,
+      "message": "Why do we need this extra in-memory value? The timestamp could be just an implementation detail of the ChronicleMap serialisation. If we read a value that has expired, we just do not return anything and we remove it from the store, without the need to return it in memory as a TimedValue.\n\nWDYT?",
+      "revId": "1b9c3c02f5a1ca406dfced06bf2f27b602f22838",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
