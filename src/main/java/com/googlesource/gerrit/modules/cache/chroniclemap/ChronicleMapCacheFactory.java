@@ -16,10 +16,14 @@ package com.googlesource.gerrit.modules.cache.chroniclemap;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.flogger.FluentLogger;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.gerrit.extensions.events.LifecycleListener;
 import com.google.gerrit.extensions.registration.DynamicMap;
 import com.google.gerrit.server.cache.CacheBackend;
 import com.google.gerrit.server.cache.PersistentCacheDef;
 import com.google.gerrit.server.cache.PersistentCacheFactory;
+import com.google.gerrit.server.logging.LoggingContextAwareScheduledExecutorService;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -28,13 +32,18 @@ import java.io.UncheckedIOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
-class ChronicleMapCacheFactory implements PersistentCacheFactory {
+class ChronicleMapCacheFactory implements PersistentCacheFactory, LifecycleListener {
+  private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
   private final ChronicleMapCacheConfig.Factory configFactory;
   private final DynamicMap<Cache<?, ?>> cacheMap;
   private final List<ChronicleMapCacheImpl<?, ?>> caches;
+  private final ScheduledExecutorService cleanup;
 
   @Inject
   ChronicleMapCacheFactory(
@@ -42,13 +51,26 @@ class ChronicleMapCacheFactory implements PersistentCacheFactory {
     this.configFactory = configFactory;
     this.caches = new LinkedList<>();
     this.cacheMap = cacheMap;
+    this.cleanup =
+        new LoggingContextAwareScheduledExecutorService(
+            Executors.newScheduledThreadPool(
+                1,
+                new ThreadFactoryBuilder()
+                    .setNameFormat("DiskCache-Prune-%d")
+                    .setDaemon(true)
+                    .build()));
   }
 
   @SuppressWarnings({"unchecked"})
   @Override
   public <K, V> Cache<K, V> build(PersistentCacheDef<K, V> in, CacheBackend backend) {
     ChronicleMapCacheConfig config =
-        configFactory.create(in.name(), in.configKey(), in.diskLimit());
+        configFactory.create(
+            in.name(),
+            in.configKey(),
+            in.diskLimit(),
+            in.expireAfterWrite(),
+            in.refreshAfterWrite());
     ChronicleMapCacheImpl<K, V> cache = null;
     try {
       cache = new ChronicleMapCacheImpl<>(in, config, null);
@@ -66,7 +88,12 @@ class ChronicleMapCacheFactory implements PersistentCacheFactory {
   public <K, V> LoadingCache<K, V> build(
       PersistentCacheDef<K, V> in, CacheLoader<K, V> loader, CacheBackend backend) {
     ChronicleMapCacheConfig config =
-        configFactory.create(in.name(), in.configKey(), in.diskLimit());
+        configFactory.create(
+            in.name(),
+            in.configKey(),
+            in.diskLimit(),
+            in.expireAfterWrite(),
+            in.refreshAfterWrite());
     ChronicleMapCacheImpl<K, V> cache = null;
     try {
       cache = new ChronicleMapCacheImpl<>(in, config, loader);
@@ -88,6 +115,25 @@ class ChronicleMapCacheFactory implements PersistentCacheFactory {
           ((ChronicleMapCacheImpl<?, ?>) cache).close();
         }
       }
+    }
+  }
+
+  @Override
+  public void start() {
+    for (ChronicleMapCacheImpl<?, ?> cache : caches) {
+      cleanup.scheduleWithFixedDelay(cache::prune, 30, 30, TimeUnit.SECONDS);
+    }
+  }
+
+  @Override
+  public void stop() {
+    try {
+      cleanup.shutdownNow();
+      if (!cleanup.awaitTermination(15, TimeUnit.MINUTES)) {
+        logger.atInfo().log("Timeout waiting for cache clean up executor to close");
+      }
+    } catch (InterruptedException e) {
+      logger.atWarning().log("Interrupted waiting for cache clean up executor to shutdown");
     }
   }
 }

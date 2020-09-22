@@ -167,7 +167,13 @@ public class ChronicleMapCacheTest {
     TestPersistentCacheDef cacheDef = new TestPersistentCacheDef(cachedValue);
     ChronicleMapCacheConfig config =
         new ChronicleMapCacheConfig(
-            gerritConfig, sitePaths, cacheDef.name(), cacheDef.configKey(), cacheDef.diskLimit());
+            gerritConfig,
+            sitePaths,
+            cacheDef.name(),
+            cacheDef.configKey(),
+            cacheDef.diskLimit(),
+            Duration.ZERO,
+            Duration.ZERO);
 
     return new ChronicleMapCacheImpl<>(cacheDef, config, withLoader ? cacheDef.loader() : null);
   }
