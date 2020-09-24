@@ -16,6 +16,24 @@
       "revId": "1b9c3c02f5a1ca406dfced06bf2f27b602f22838",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c35cabe9_70d522ee",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/TimedValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2020-09-24T13:25:30Z",
+      "side": 1,
+      "message": "Ok, Apologies if I completely misunderstood your suggestion 😊\n\nIf get what you are saying, you are proposing to get the _deserializer_ to decide whether the object is stale and in that case return null rather than the object?\nThen have some logic whereby if a null object is returned from the store, the key is also removed.\n\nI think the deserializer should do just that, deserialize an array of bytes, rather applying eviction logic to the stored objects.\nIsn\u0027t that responsibility of the cacheImpl, which will take the decision based on the configuration?\n\nAlso, readBytes always receives a serialized input, I don\u0027t think it is _ever_ expected to return null, but always a T.\n\nDid I get you wrong?\n\n[1]https://www.javadoc.io/doc/net.openhft/chronicle-map/3.8.0/net/openhft/chronicle/hash/serialization/BytesReader.html",
+      "parentUuid": "32b04cab_d9db4da3",
+      "revId": "1b9c3c02f5a1ca406dfced06bf2f27b602f22838",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
