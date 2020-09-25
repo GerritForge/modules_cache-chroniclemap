@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5bae3440_b22b11e0",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-25T11:08:22Z",
+      "side": 1,
+      "message": "Why do we need the assisted injection here? The assisted injected values are the one inserted by Guice and not by us in the method call, or am I missing something?",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 77
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3cb70aaf_e8a11512",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-25T11:08:22Z",
+      "side": 1,
+      "message": "Who\u0027s binding those injected values?",
+      "range": {
+        "startLine": 61,
+        "startChar": 6,
+        "endLine": 65,
+        "endChar": 74
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c31f93b1_87af82ed",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-25T11:08:22Z",
+      "side": 1,
+      "message": "I would give something more specific to this plugin, prefixing the plugin name.",
+      "range": {
+        "startLine": 59,
+        "startChar": 36,
+        "endLine": 59,
+        "endChar": 45
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9140abdb_71ff02bb",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-25T11:08:22Z",
+      "side": 1,
+      "message": "This should be configurable, as different setups may have different needs on how often to schedule this. Also, in case of very large caches, they may want to do it on a cron-tab style basis.\n\nCan you check how other parts of Gerrit are doing this?",
+      "range": {
+        "startLine": 125,
+        "startChar": 53,
+        "endLine": 125,
+        "endChar": 59
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "745c7b8b_aab70c7b",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-25T11:08:22Z",
+      "side": 1,
+      "message": "Why do we need to wait? The cleanup is a best-effort operation: if we don\u0027t clean up in this cycle, we\u0027ll do in the next one, isn\u0027t it?",
+      "range": {
+        "startLine": 134,
+        "startChar": 36,
+        "endLine": 134,
+        "endChar": 56
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8a317f9_1bbcd5b6",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-25T11:08:22Z",
+      "side": 1,
+      "message": "What do we expect the Gerrit admin to do as a consequence of that? Should the admin be worries? I don\u0027t believe so.",
+      "range": {
+        "startLine": 138,
+        "startChar": 0,
+        "endLine": 138,
+        "endChar": 92
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}

@@ -34,6 +34,24 @@
       "revId": "1b9c3c02f5a1ca406dfced06bf2f27b602f22838",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31cf6b51_d2c09eeb",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/TimedValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-25T11:08:22Z",
+      "side": 1,
+      "message": "I am concerned from a performance standpoint, which is exactly the reason why we are using ChronicleMap: it should be super-lighting fast.\n\nThis new object is created and destroyed continuously, serialised and deserialised but never returned upstream because it is an internal implementation.\n\nWe do know that a stale value should never be returned, right? So why returning a new TimedValue knowing that is stale and knowing that the caller would just put into the GC? We are just wasting CPU cycles and giving lots of extra work for the Java GC.\n\nWhat do you think?",
+      "parentUuid": "c35cabe9_70d522ee",
+      "revId": "1b9c3c02f5a1ca406dfced06bf2f27b602f22838",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
