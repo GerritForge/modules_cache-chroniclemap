@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "10871e08_e7c16ae6",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-26T09:03:40Z",
+      "side": 1,
+      "message": "Yes, I did not notice that there are multiple parameters of the same type: that\u0027s why you need to add the @Assisted annotation here as well.",
+      "parentUuid": "5bae3440_b22b11e0",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 77
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3cb70aaf_e8a11512",
         "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheConfig.java",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "bdf8cb25_1cedec6d",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheConfig.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-26T09:03:40Z",
+      "side": 1,
+      "message": "I\u0027ve already answered myself :-)",
+      "parentUuid": "3cb70aaf_e8a11512",
+      "range": {
+        "startLine": 61,
+        "startChar": 6,
+        "endLine": 65,
+        "endChar": 74
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c31f93b1_87af82ed",
         "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
         "patchSetId": 4
@@ -64,6 +112,29 @@
         "startChar": 36,
         "endLine": 59,
         "endChar": 45
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d32c5c6f_09fba7ed",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-26T09:03:40Z",
+      "side": 1,
+      "message": "Why not passing directly the PersistentCacheDef\u003c\u003e instead?",
+      "range": {
+        "startLine": 92,
+        "startChar": 12,
+        "endLine": 96,
+        "endChar": 34
       },
       "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
