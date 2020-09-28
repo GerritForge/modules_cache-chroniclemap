@@ -190,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "a0200850_afb7a5c7",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-28T12:35:45Z",
+      "side": 1,
+      "message": "Nevermind, it can be addressed later on as a follow-up.",
+      "parentUuid": "df0bbfea_7fa90b73",
+      "range": {
+        "startLine": 92,
+        "startChar": 12,
+        "endLine": 96,
+        "endChar": 34
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9140abdb_71ff02bb",
         "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
         "patchSetId": 4
@@ -225,6 +249,30 @@
       "side": 1,
       "message": "This is not configurable for the H2 implementation[1], so I thought to keep it KISS for chronicle-map too.\nHowever I agree with you: shall I add a TODO for this to be addressed as a follow up?\n\n[1]https://gerrit.googlesource.com/gerrit.git/+/refs/heads/master/java/com/google/gerrit/server/cache/h2/H2CacheFactory.java#129",
       "parentUuid": "9140abdb_71ff02bb",
+      "range": {
+        "startLine": 125,
+        "startChar": 53,
+        "endLine": 125,
+        "endChar": 59
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "47b9780d_4b5a804d",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-28T12:35:45Z",
+      "side": 1,
+      "message": "But at least I would avoid the magic numbers in the code: defining a static final with a meaningful name wouldn\u0027t hurt, is not a big effort and would make the code more readable. WDYT?",
+      "parentUuid": "5c04b52e_5a32cf5e",
       "range": {
         "startLine": 125,
         "startChar": 53,
