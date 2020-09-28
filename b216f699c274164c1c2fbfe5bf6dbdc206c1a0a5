@@ -22,6 +22,30 @@
       "revId": "b216f699c274164c1c2fbfe5bf6dbdc206c1a0a5",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85d24da3_c6cb0423",
+        "filename": "src/test/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2020-09-28T13:56:27Z",
+      "side": 1,
+      "message": "Fixed",
+      "parentUuid": "6d2c1a5f_48e4d766",
+      "range": {
+        "startLine": 183,
+        "startChar": 1,
+        "endLine": 195,
+        "endChar": 7
+      },
+      "revId": "b216f699c274164c1c2fbfe5bf6dbdc206c1a0a5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
