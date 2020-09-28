@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6d2c1a5f_48e4d766",
+        "filename": "src/test/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2020-09-28T09:40:13Z",
+      "side": 1,
+      "message": "I am getting an exception when running this test:\n\nChronicleMap{name\u003dchronicle-map-test-cache, file\u003dnull, identityHashCode\u003d1021436681}: Update or Write locking is forbidden in the context of locked iteration context\njava.lang.IllegalStateException: \n\tat net.openhft.chronicle.map.impl.CompiledMapQueryContext.checkIterationContextNotLockedInThisThread(CompiledMapQueryContext.java:3528)\n\tat net.openhft.chronicle.map.impl.CompiledMapQueryContext$UpdateLock.lock(CompiledMapQueryContext.java:1139)\n\tat net.openhft.chronicle.map.MapMethods.remove(MapMethods.java:216)\n\tat net.openhft.chronicle.map.VanillaChronicleMap.remove(VanillaChronicleMap.java:828)\n\tat com.googlesource.gerrit.modules.cache.chroniclemap.ChronicleMapCacheImpl.invalidate(ChronicleMapCacheImpl.java:190)\n\tat com.googlesource.gerrit.modules.cache.chroniclemap.ChronicleMapCacheImpl.invalidateIfExpired(ChronicleMapCacheImpl.java:172)\n\tat net.openhft.chronicle.map.AbstractChronicleMap.lambda$forEachEntry$5(AbstractChronicleMap.java:234)\n\tat net.openhft.chronicle.map.impl.CompiledMapIterationContext.forEachTierEntryWhile(CompiledMapIterationContext.java:3891)\n\tat net.openhft.chronicle.map.impl.CompiledMapIterationContext.innerForEachSegmentEntryWhile(CompiledMapIterationContext.java:3926)\n\tat net.openhft.chronicle.map.impl.CompiledMapIterationContext.forEachSegmentEntryWhile(CompiledMapIterationContext.java:3947)\n\tat net.openhft.chronicle.map.AbstractChronicleMap.forEachEntryWhile(AbstractChronicleMap.java:244)\n\tat net.openhft.chronicle.map.AbstractChronicleMap.forEachEntry(AbstractChronicleMap.java:233)\n\tat com.googlesource.gerrit.modules.cache.chroniclemap.ChronicleMapCacheImpl.prune(ChronicleMapCacheImpl.java:166)\n\tat com.googlesource.gerrit.modules.cache.chroniclemap.ChronicleMapCacheTest.shouldPruneExpiredValues(ChronicleMapCacheTest.java:189)\n\nEverything seems to be working when running in Gerrit. I am looking into this",
+      "range": {
+        "startLine": 183,
+        "startChar": 1,
+        "endLine": 195,
+        "endChar": 7
+      },
+      "revId": "b216f699c274164c1c2fbfe5bf6dbdc206c1a0a5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
