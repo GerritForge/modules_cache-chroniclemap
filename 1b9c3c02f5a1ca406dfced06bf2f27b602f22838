@@ -52,6 +52,24 @@
       "revId": "1b9c3c02f5a1ca406dfced06bf2f27b602f22838",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "738e0c15_cc390c80",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/TimedValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2020-09-28T09:37:01Z",
+      "side": 1,
+      "message": "I understand your point, however:\n\n- What you are suggesting would require to move the invalidation logic directly into the marshaller. I find this wrong from a responsibility point of view, but not only: the BytesReader.read() method used for deserialization is explicitly flagged as returning @NotNull results[1]. We would need to break that contract.\n\n- As a mitigation of this, an additional change could be: If maxAge is not configured, we could skip the entire wrapping into TimedValue.\n\n- It sounds to me a pre-optimization to be honest. it\u0027d be useful to measure how much overhead is added by deserializing and keeping in memory the TimedValue\u003cV\u003e rather than V. Cached values (with some exceptions) are already complex types that occupy hundreds of bytes\n   * Perhaps the addition/(de)serialization of 12 bytes does not make a noticeable difference.\n   * The value, if expired, will be invalidated immediately after by the cache implementation so it will not occupy any space in memory.\n\nShould we measure what\u0027s the impact of this wrapping over performance (perhaps with a load test) and act accordingly?\n\n[1]https://github.com/OpenHFT/Chronicle-Map/blob/master/src/main/java/net/openhft/chronicle/hash/serialization/BytesReader.java#L58",
+      "parentUuid": "31cf6b51_d2c09eeb",
+      "revId": "1b9c3c02f5a1ca406dfced06bf2f27b602f22838",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }

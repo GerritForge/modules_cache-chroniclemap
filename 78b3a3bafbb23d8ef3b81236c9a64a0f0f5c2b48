@@ -119,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "4bec0e0d_a2c2d78d",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2020-09-28T09:37:01Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c31f93b1_87af82ed",
+      "range": {
+        "startLine": 59,
+        "startChar": 36,
+        "endLine": 59,
+        "endChar": 45
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d32c5c6f_09fba7ed",
         "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
         "patchSetId": 4
@@ -130,6 +154,30 @@
       "writtenOn": "2020-09-26T09:03:40Z",
       "side": 1,
       "message": "Why not passing directly the PersistentCacheDef\u003c\u003e instead?",
+      "range": {
+        "startLine": 92,
+        "startChar": 12,
+        "endLine": 96,
+        "endChar": 34
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df0bbfea_7fa90b73",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2020-09-28T09:37:01Z",
+      "side": 1,
+      "message": "I am not sure if that\u0027s possible tbh.\nPassing PersistentCacheDef\u003c\u003e directly would require to make ConfigFactory\u003c\u003e generic too, which would prevent us for binding a specific instance of the factory in ChronicleMapCacheModule.\n\ni.e., this would not work anymore:\n\nfactory(ChronicleMapCacheConfig.Factory.class);\n\nIs the binding of generics factories supported by Guice?",
+      "parentUuid": "d32c5c6f_09fba7ed",
       "range": {
         "startLine": 92,
         "startChar": 12,
@@ -165,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "5c04b52e_5a32cf5e",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2020-09-28T09:37:01Z",
+      "side": 1,
+      "message": "This is not configurable for the H2 implementation[1], so I thought to keep it KISS for chronicle-map too.\nHowever I agree with you: shall I add a TODO for this to be addressed as a follow up?\n\n[1]https://gerrit.googlesource.com/gerrit.git/+/refs/heads/master/java/com/google/gerrit/server/cache/h2/H2CacheFactory.java#129",
+      "parentUuid": "9140abdb_71ff02bb",
+      "range": {
+        "startLine": 125,
+        "startChar": 53,
+        "endLine": 125,
+        "endChar": 59
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "745c7b8b_aab70c7b",
         "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
         "patchSetId": 4
@@ -188,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "e3dda231_ea37aa29",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2020-09-28T09:37:01Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "745c7b8b_aab70c7b",
+      "range": {
+        "startLine": 134,
+        "startChar": 36,
+        "endLine": 134,
+        "endChar": 56
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b8a317f9_1bbcd5b6",
         "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
         "patchSetId": 4
@@ -208,6 +304,30 @@
       "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ba754824_b6aab4d3",
+        "filename": "src/main/java/com/googlesource/gerrit/modules/cache/chroniclemap/ChronicleMapCacheFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1015244
+      },
+      "writtenOn": "2020-09-28T09:37:01Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b8a317f9_1bbcd5b6",
+      "range": {
+        "startLine": 138,
+        "startChar": 0,
+        "endLine": 138,
+        "endChar": 92
+      },
+      "revId": "78b3a3bafbb23d8ef3b81236c9a64a0f0f5c2b48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
